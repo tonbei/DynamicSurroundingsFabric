@@ -164,13 +164,13 @@ public class IndividualSoundControlScreen extends Screen {
     protected void save(final ButtonWidget button) {
         // Gather the changes and push to underlying routine for parsing and packaging
         this.soundConfigList.saveChanges();
-        this.close();
+        this.onClose();
         this.closeScreen();
     }
 
     protected void cancel(final ButtonWidget button) {
         // Just discard - no processing
-        this.close();
+        this.onClose();
         this.closeScreen();
     }
 }

@@ -13,7 +13,6 @@ import org.orecruncher.dsurround.config.InternalBiomes;
 import org.orecruncher.dsurround.config.biome.BiomeInfo;
 import org.orecruncher.dsurround.config.dimension.DimensionInfo;
 import org.orecruncher.dsurround.lib.GameUtils;
-import org.orecruncher.dsurround.mixins.core.BiomeAccessor;
 import org.orecruncher.dsurround.processing.Scanners;
 
 @Environment(EnvType.CLIENT)
@@ -65,11 +64,11 @@ public final class BiomeScanner {
         var biomes = world.getBiomeAccess();
         var playerBiome = biomes.getBiome(position);
 
-        if (this.surveyedBiome != playerBiome.value()
+        if (this.surveyedBiome != playerBiome
                 || !surveyedDimension.equals(dimensionInfo)
                 || !this.surveyedPosition.equals(position)) {
 
-            this.surveyedBiome = playerBiome.value();
+            this.surveyedBiome = playerBiome;
             this.surveyedPosition = position;
             surveyedDimension = dimensionInfo;
 
@@ -77,7 +76,7 @@ public final class BiomeScanner {
             isUnderWater = player.isSubmergedIn(FluidTags.WATER);
             if (isUnderWater) {
                 InternalBiomes internalBiome;
-                var playerBiomeInfo = BiomeLibrary.getBiomeInfo(playerBiome.value());
+                var playerBiomeInfo = BiomeLibrary.getBiomeInfo(playerBiome);
                 if (playerBiomeInfo.isRiver())
                     internalBiome = InternalBiomes.UNDER_RIVER;
                 else if (playerBiomeInfo.isDeepOcean())
@@ -119,7 +118,7 @@ public final class BiomeScanner {
         var biome = access.getBiome(pos);
 
         // If it is not an underground biome see if we need to simulate one of the other internal biomes
-        if (((BiomeAccessor) (Object) biome.value()).getCategory() != Biome.Category.UNDERGROUND) {
+        if (biome.getCategory() != Biome.Category.UNDERGROUND) {
             var y = pos.getY();
             if (y < (dimInfo.getSeaLevel() - UNDERGROUND_THRESHOLD_OFFSET)) {
                 return BiomeLibrary.getBiomeInfo(InternalBiomes.UNDERGROUND);
@@ -133,7 +132,7 @@ public final class BiomeScanner {
             }
         }
 
-        return BiomeLibrary.getBiomeInfo(biome.value());
+        return BiomeLibrary.getBiomeInfo(biome);
     }
 
     public int getBiomeArea() {

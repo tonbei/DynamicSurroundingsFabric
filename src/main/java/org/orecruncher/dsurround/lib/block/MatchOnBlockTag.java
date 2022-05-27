@@ -2,25 +2,40 @@ package org.orecruncher.dsurround.lib.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.tag.TagKey;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.orecruncher.dsurround.lib.GameUtils;
+
+import java.util.Optional;
 
 public class MatchOnBlockTag extends BlockStateMatcher {
 
-    private final TagKey<Block> tagId;
+    private final Identifier tagId;
 
     MatchOnBlockTag(Identifier tagId) {
-        this.tagId = TagKey.of(Registry.BLOCK_KEY, tagId);
+        this.tagId = tagId;
     }
 
     @Override
     public boolean isEmpty() {
-        return Registry.BLOCK.containsTag(tagId);
+        var tag = resolveTag();
+        return tag.isEmpty() || tag.get().values().size() == 0;
     }
 
     @Override
     public boolean match(BlockState state) {
-        return state.isIn(this.tagId);
+        var tag = resolveTag();
+        return tag.isPresent() && tag.get().contains(state.getBlock());
+    }
+
+    private Optional<Tag<Block>> resolveTag() {
+        try {
+            var result = GameUtils.getWorld().getTagManager()
+                    .getTag(Registry.BLOCK_KEY, tagId, id -> new RuntimeException("Tag not found in registry"));
+            return Optional.ofNullable(result);
+        } catch(Throwable ignored) {
+        }
+        return Optional.empty();
     }
 }

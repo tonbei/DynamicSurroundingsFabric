@@ -2,7 +2,6 @@ package org.orecruncher.dsurround.config.biome.biometraits;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
-import org.orecruncher.dsurround.mixins.core.BiomeAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +13,7 @@ public class BiomeClimateAnalyzer implements IBiomeTraitAnalyzer {
     public Collection<BiomeTrait> evaluate(Identifier id, Biome biome) {
         List<BiomeTrait> results = new ArrayList<>();
 
-        var category = ((BiomeAccessor) (Object) biome).getCategory();
+        var category = biome.getCategory();
 
         // If it's The End there isn't much going on.
         if (category == Biome.Category.THEEND) {
